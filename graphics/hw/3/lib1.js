@@ -44,9 +44,10 @@ function gl_start(canvas, vertexShader, fragmentShader) {           // START WEB
 	       if (a.substring(0, 3) == ' 0:') {
 	          a = a.substring(3, a.length);
 	          let line = parseInt(a) - nfsh + 1;
-		  let nPixels = isFirefox ? 13 * line - 10 : 13 * line - 1;
+		        // let nPixels = isFirefox ? 13 * line - 10 : 12 * line - 10;
+            let nPixels = 14 * line - 22;
 	          errorMarker.innerHTML = spacer('black', 1, nPixels) + '<font size=5>\u25B6</font>';
-               }
+         }
 
 	       let j = a.indexOf(':');
 	       a = a.substring(j+2, a.length);

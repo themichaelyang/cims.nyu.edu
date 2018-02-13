@@ -3,6 +3,7 @@
     padding: 10px;
     padding-top: 20px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    color: white;
   }
   p {
     font-size: 14px;
@@ -11,6 +12,12 @@
     font-size: 12px;
     font-family: Menlo, Consolas, mono;
     height: 800px;
+    background: black;
+  }
+  table {
+    margin: 0 auto;
+    position: relative;
+    right: 100px;
   }
 </style>
 <script src=lib1.js></script>
@@ -66,17 +73,18 @@ void main() {
      else if (t2 > 0.) t = t2;
 
      vec3 S = V + t * W;
+
      if (t == 0.) N.z = -1.;
      else N = normalize(S - C);
    }
    else {
-    N.z = -1.;
+     N.z = -1.;
    }
 
    vec3 L = vec3(.5 * sin(5. * uTime), 1., 1.);
    float c = max(.1, dot(N, normalize(L)));
    c = step(0., N.z) * .5 * c;
-   color = vec3(c, c * c, c * c * c);
+   color = vec3(5. * c, 0.25 * c, 0.25 * c);
    gl_FragColor = vec4(sqrt(color), 1.0);
  }
 </script>
@@ -85,7 +93,7 @@ void main() {
 <!!-------- CREATE A PROPERLY DESCRIPTIVE TITLE BELOW -------->
 
 <script id='my_title' type='text/html'>
-  <strong>Ray Tracing</strong>
+  <h1>Ray Tracing</h1>
 </script>
 
 <!!-------- YOU PROBABLY DON'T WANT TO CHANGE ANYTHING BELOW FOR NOW -------->
@@ -96,7 +104,7 @@ var vs = my_vertex_shader.innerHTML,
     fs = fs.substring(1, fs.length);
 
 document.body.innerHTML = [''
-   ,'<center><font size=6 color=#b0b0b0>' + my_title.innerHTML + '</center>'
+   ,'<center>' + my_title.innerHTML + '</center>'
    ,'<TABLE cellspacing=0 cellpadding=0><TR>'
    ,'<td width=50></td><td><font color=red size=5><div id=errorMessage>&nbsp;</div></font></td>'
    ,'</TR><TR>'
@@ -107,7 +115,7 @@ document.body.innerHTML = [''
    ,'<textArea id=textArea spellcheck=false '
    ,'style="outline-width:0;border-style:none;resize:none;"'
    ,'></textArea>'
-   ,'<td><canvas id="canvas1" width="300" height="300"></canvas></td>'
+   ,'<td valign=top><canvas id="canvas1" width="300" height="300"></canvas></td>'
    ,'</tr></table>'
    ,'</TR></TABLE>'
    ].join('');
@@ -119,7 +127,6 @@ for (i = 0 ; i < text.length ; i++)
 textArea.rows = text.length;
 textArea.cols = cols;
 textArea.value = fs;
-textArea.style.backgroundColor = '#202020';
 textArea.style.color = 'white';
 textArea.onkeyup = function() { canvas1.setShaders(vs, this.value); }
 
