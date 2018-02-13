@@ -10,6 +10,7 @@
   textarea {
     font-size: 12px;
     font-family: Menlo, Consolas, mono;
+    height: 800px;
   }
 </style>
 <script src=lib1.js></script>
@@ -42,22 +43,40 @@ varying vec3 vPos;
 
 void main() {
    float f = 1.;
-   float r = 5.;
+   float r = 0.5;
+
    vec3 V = vec3(0., 0., f);
    vec3 W = normalize(vec3(vPos.x, vPos.y, -f));
-   vec3 C = vec3(0., 0., 10.);
+   vec3 C = vec3(0., 0., 0.);
    vec3 P = V - C;
 
-   float diffWP = -dot(W, P);
-   float srt = sqrt(pow(dot(W, P), 2.) - dot(P, P) + pow(r, 2.));
-   float t = diffWP - srt;
-   vec3 S = V + t * W;
-   vec3 N = normalize(S - C);
+   float inner = pow(dot(W, P), 2.) - dot(P, P) + pow(r, 2.);
+   vec3 color = vec3(0, 0, 0.);
+   vec3 N;
 
-   vec3 L = vec3(.5*sin(5.*uTime),1.,1.);
+   if (inner > 0.) {
+     float WP = -dot(W, P);
+     float root = sqrt(inner);
+
+     float t1 = WP - root;
+     float t2 = WP + root;
+     float t = 0.;
+
+     if (t1 > 0.) t = t1;
+     else if (t2 > 0.) t = t2;
+
+     vec3 S = V + t * W;
+     if (t == 0.) N.z = -1.;
+     else N = normalize(S - C);
+   }
+   else {
+    N.z = -1.;
+   }
+
+   vec3 L = vec3(.5 * sin(5. * uTime), 1., 1.);
    float c = max(.1, dot(N, normalize(L)));
    c = step(0., N.z) * .5 * c;
-   vec3 color = vec3(c, c*c, c*c*c);
+   color = vec3(c, c * c, c * c * c);
    gl_FragColor = vec4(sqrt(color), 1.0);
  }
 </script>
@@ -86,7 +105,7 @@ document.body.innerHTML = [''
    ,'<td valign=top><font size=2 color=red><div id=errorMarker>&nbsp;</div></font></td>'
    ,'<td valign=top>'
    ,'<textArea id=textArea spellcheck=false '
-   ,'style="outline-width:0;border-style:none;resize:none;overflow:scroll;"'
+   ,'style="outline-width:0;border-style:none;resize:none;"'
    ,'></textArea>'
    ,'<td><canvas id="canvas1" width="300" height="300"></canvas></td>'
    ,'</tr></table>'
