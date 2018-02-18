@@ -1,0 +1,154 @@
+<style>
+  body {
+    padding: 10px;
+    padding-top: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    color: white;
+  }
+  p {
+    font-size: 14px;
+  }
+  textarea {
+    font-size: 12px;
+    font-family: Menlo, Consolas, mono;
+    height: 800px;
+    background: black;
+  }
+  table {
+    margin: 0 auto;
+    position: relative;
+    right: 100px;
+  }
+</style>
+<script src=lib1.js></script>
+
+<body bgcolor=black text=white link=white alink=white vlink=white>
+
+<center>
+<canvas id='canvas1' width=400 height=400></canvas>
+</center>
+</body>
+
+
+<!!-------- VERTEX SHADER: YOU PROBABLY DON'T WANT TO CHANGE THIS RIGHT NOW -------->
+
+<script id='my_vertex_shader' type='x-shader/x-vertex'>
+   attribute vec3 aPos;
+   varying   vec3 vPos;
+   void main() {
+      gl_Position = vec4(aPos, 1.);
+      vPos = aPos;
+   }
+</script>
+
+
+<!!-------- FRAGMENT SHADER: THIS IS WHERE YOU WILL DO YOUR WORK -------->
+
+<script id='my_fragment_shader' type='x-shader/x-fragment'>
+uniform float uTime;
+varying vec3 vPos;
+
+vec3 sphere(float r, vec3 C) {
+   float f = 1.;
+   
+   vec3 V = vec3(0., 0., f);
+   vec3 W = normalize(vec3(vPos.x, vPos.y, -f));
+   vec3 P = V - C;
+   
+   float inner = pow(dot(W, P), 2.) - dot(P, P) + pow(r, 2.);
+   vec3 N = vec3(0., 0., 0.);
+
+   if (inner > 0.) {
+     float WP = -dot(W, P);
+     float root = sqrt(inner);
+
+     float t1 = WP - root;
+     float t2 = WP + root;
+     float t = 0.;
+
+     if (t1 > 0.) t = t1;
+     else if (t2 > 0.) t = t2;
+
+     vec3 S = V + t * W;
+
+     if (t == 0.) N.z = -1.;
+     else N = normalize(S - C);
+   }
+   else {
+     N.z = -1.;
+   }
+
+   return N;
+}
+
+void main() {
+   float r = 0.2;
+   vec3 C = vec3(0., 0., 0.);
+   vec3 N1 = sphere(r, C);
+   vec3 N2 = sphere(0.2, vec3(0.1, 0.1, 0.));
+   vec3 N = N1;
+
+   if (N2.z > N1.z) {
+     N = N2;
+   }
+
+   vec3 L = vec3(.5 * sin(5. * uTime), 1., 1.);
+   float c = max(.1, dot(N, normalize(L)));
+   c = step(0., N.z) * .5 * c;
+   vec3 color = vec3(2. * c, 0.1 * c, 0.1 * c);
+   gl_FragColor = vec4(sqrt(color), 1.0);
+ }
+
+</script>
+
+
+<!!-------- CREATE A PROPERLY DESCRIPTIVE TITLE BELOW -------->
+
+<script id='my_title' type='text/html'>
+  <h1>Ray Tracing</h1>
+</script>
+
+<!!-------- YOU PROBABLY DON'T WANT TO CHANGE ANYTHING BELOW FOR NOW -------->
+   
+<script>
+var vs = my_vertex_shader.innerHTML,
+    fs = my_fragment_shader.innerHTML;
+    fs = fs.substring(1, fs.length);
+
+document.body.innerHTML = [''
+   ,'<center>' + my_title.innerHTML + '</center>'
+   ,'<TABLE cellspacing=0 cellpadding=0><TR>'
+   ,'<td width=50></td><td><font color=red size=5><div id=errorMessage>&nbsp;</div></font></td>'
+   ,'</TR><TR>'
+   ,'<table cellspacing=10>'
+   ,'<tr>'
+   ,'<td valign=top><font size=2 color=red><div id=errorMarker>&nbsp;</div></font></td>'
+   ,'<td valign=top>'
+   ,'<textArea id=textArea spellcheck=false '
+   ,'style="outline-width:0;border-style:none;resize:none;"'
+   ,'></textArea>'
+   ,'<td valign=top><canvas id="canvas1" width="300" height="300"></canvas></td>'
+   ,'</tr></table>'
+   ,'</TR></TABLE>'
+   ].join('');
+
+var i, text = fs.split('\n'), cols = 0;
+for (i = 0 ; i < text.length ; i++)
+   cols = Math.max(cols, text[i].length);
+
+textArea.rows = text.length;
+textArea.cols = cols;
+textArea.value = fs;
+textArea.style.color = 'white';
+textArea.onkeyup = function() { canvas1.setShaders(vs, this.value); }
+
+var startTime = Date.now();
+
+function animate(gl) {
+   let time = (Date.now() - startTime) / 1000;
+   setUniform('1f', 'uTime', time);
+}
+
+gl_start(canvas1, vs, fs);
+</script>
+
