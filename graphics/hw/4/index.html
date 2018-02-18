@@ -11,7 +11,7 @@
   textarea {
     font-size: 12px;
     font-family: Menlo, Consolas, mono;
-    height: 800px;
+    height: 1000px;
     background: black;
   }
   table {
@@ -48,13 +48,10 @@
 uniform float uTime;
 varying vec3 vPos;
 
-vec3 sphere(float r, vec3 C) {
-   float f = 1.;
-   
+vec3 spherePhong(float r, float f, vec3 W, vec3 C, vec3 L) {
    vec3 V = vec3(0., 0., f);
-   vec3 W = normalize(vec3(vPos.x, vPos.y, -f));
    vec3 P = V - C;
-   
+
    float inner = pow(dot(W, P), 2.) - dot(P, P) + pow(r, 2.);
    vec3 N = vec3(0., 0., 0.);
 
@@ -82,30 +79,42 @@ vec3 sphere(float r, vec3 C) {
 }
 
 void main() {
-   float r = 0.2;
-   vec3 C = vec3(0., 0., 0.);
-   vec3 N1 = sphere(r, C);
-   vec3 N2 = sphere(0.2, vec3(0.1, 0.1, 0.));
+   float f = 1.;
+   vec3 W = normalize(vec3(vPos.x, vPos.y, -f));
+   vec3 E = -W;
+   vec3 L = (vec3(.5 * sin(5. * uTime), 1., 1.));
+
+   vec3 N1 = spherePhong(0.3, f, W, vec3(-0.2, -0.2, -0.1), L);
+   vec3 N2 = spherePhong(0.2, f, W, vec3(0.2, 0.2, -0.5), L);
    vec3 N = N1;
 
    if (N2.z > N1.z) {
      N = N2;
    }
+   
+   vec3 R = (2. * dot(N, L) * N) - L;
+   float p = 5.;
 
-   vec3 L = vec3(.5 * sin(5. * uTime), 1., 1.);
-   float c = max(.1, dot(N, normalize(L)));
+   float d1 = .2; // specular
+   float d2 = .4; // diffuse
+   float a = 0.1;
+
+   float c1 = pow(max(0., dot(E, R)), p);
+   float c2 = max(0., dot(N, L));
+
+   float c = d1 * c1 + d2 * c2 + a;
+
    c = step(0., N.z) * .5 * c;
-   vec3 color = vec3(2. * c, 0.1 * c, 0.1 * c);
+   vec3 color = vec3(c, c * c, c * c * c);
    gl_FragColor = vec4(sqrt(color), 1.0);
  }
-
 </script>
 
 
 <!!-------- CREATE A PROPERLY DESCRIPTIVE TITLE BELOW -------->
 
 <script id='my_title' type='text/html'>
-  <h1>Ray Tracing</h1>
+  <h1>Phong Shading</h1>
 </script>
 
 <!!-------- YOU PROBABLY DON'T WANT TO CHANGE ANYTHING BELOW FOR NOW -------->
@@ -132,7 +141,7 @@ document.body.innerHTML = [''
    ,'</TR></TABLE>'
    ].join('');
 
-var i, text = fs.split('\n'), cols = 0;
+var i, text = fs.split('\n'), cols = 80;
 for (i = 0 ; i < text.length ; i++)
    cols = Math.max(cols, text[i].length);
 
