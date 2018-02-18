@@ -82,10 +82,10 @@ void main() {
    float f = 1.;
    vec3 W = normalize(vec3(vPos.x, vPos.y, -f));
    vec3 E = -W;
-   vec3 L = (vec3(.5 * sin(5. * uTime), 1., 1.));
+   vec3 L = vec3(0.5, 1., 1.);
 
-   vec3 N1 = spherePhong(0.3, f, W, vec3(-0.2, -0.2, -0.1), L);
-   vec3 N2 = spherePhong(0.2, f, W, vec3(0.2, 0.2, -0.5), L);
+   vec3 N1 = spherePhong(0.3, f, W, vec3(-0.2 + tan(uTime) / 4., -0.2, -0.1 + tan(uTime) / 4.), L);
+   vec3 N2 = spherePhong(0.2, f, W, vec3(0.2, 0.2 + tan(uTime) / 2., -0.5 + tan(uTime) / 4.), L);
    vec3 N = N1;
 
    if (N2.z > N1.z) {
@@ -93,9 +93,9 @@ void main() {
    }
    
    vec3 R = (2. * dot(N, L) * N) - L;
-   float p = 5.;
+   float p = 7.;
 
-   float d1 = .2; // specular
+   float d1 = 0.1; // specular
    float d2 = .4; // diffuse
    float a = 0.1;
 
@@ -105,7 +105,7 @@ void main() {
    float c = d1 * c1 + d2 * c2 + a;
 
    c = step(0., N.z) * .5 * c;
-   vec3 color = vec3(c, c * c, c * c * c);
+   vec3 color = vec3(4. * c, 0.3 * c, 0.3 * c);
    gl_FragColor = vec4(sqrt(color), 1.0);
  }
 </script>
