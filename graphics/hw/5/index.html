@@ -1,0 +1,258 @@
+<style>
+  body {
+    padding: 10px;
+    padding-top: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: white;
+  }
+  p {
+    font-size: 14px;
+  }
+  textarea {
+    font-size: 12px;
+    font-family: Menlo, Consolas, mono;
+    height: 1000px;
+    background-color: black;
+  }
+  table {
+    margin: 0 auto;
+    position: relative;
+    right: 50px;
+    color: white;
+  }
+</style>
+<script src=lib2.js></script>
+
+<body bgcolor=black text=white link=white alink=white vlink=white>
+<center>
+<canvas id='canvas1' width=400 height=400></canvas>
+</center>
+</body>
+
+<script id='my_vertex_shader' type='x-shader/x-vertex'>
+   attribute vec3 aPos;
+   varying   vec3 vPos;
+   void main() {
+      gl_Position = vec4(aPos, 1.);
+      vPos = aPos;
+   }
+</script>
+
+<script id='my_fragment_shader' type='x-shader/x-fragment'>
+uniform float uTime;
+varying vec3  vPos;
+uniform mat4  uMat;
+
+vec4 raySph(vec3 V,vec3 W,vec4 S) {// TRACE RAY
+   vec3  P = S.xyz - V;            // TO SPHERE
+   float b = dot(W, P);
+   float d = b * b - dot(P, P) + S.w * S.w;
+   float t = b - sqrt(d);
+   return vec4(V + t*W, step(0.,d)*step(0.,t));
+}
+
+void main() {
+   float f = 5.;                // FOCAL LENGTH
+   vec3 color = vec3(0.,0.,.0); // BACKGD COLOR
+   vec3 V = vec3(0., 0., f);    // CREATE RAY
+   vec3 W = normalize(vec3(vPos.xy, -f));
+   vec4 S1 = vec4(.5,.5,.3,.2); // DEFINE SPHERE
+   vec4 S2 = vec4(-.5, -.5,.3,.2); // DEFINE SPHERE
+
+   // separate center, radius, apply umatrix
+   vec3 C1 = S1.xyz;
+   float r1 = S1.w;
+   C1 = (uMat * vec4(C1, 1.)).xyz;
+
+   // separate center, radius, apply umatrix
+   vec3 C2 = S2.xyz;
+   float r2 = S2.w;
+   C2 = (uMat * vec4(C2, 1.)).xyz;
+
+   // two spheres
+   vec4 P1 = raySph(V,W, vec4(C1,r1));
+   vec4 P2 = raySph(V,W, vec4(C2,r2));
+
+   vec4 P = P1;
+   vec3 C = C1;
+   float r = r1;
+
+   if (P.w <= 0. || P.z > P2.z) {
+     P = P2;
+     C = C2;
+     r = r2;
+   }
+
+   if (P.w > 0.) {
+      vec3 N = (P.xyz - C) / r;
+      vec3 L = normalize(vec3(1.,1.,1.));
+      float c = .1 + .9 * max(0., dot(N, L));
+      color = vec3(4. * c, 0.3 * c, 0.3 * c);
+   }
+   gl_FragColor = vec4(sqrt(color), 1.0);
+}</script>
+
+<script id='instructions' type='text/html'>
+<b>Description</b>
+<p>
+These are spheres controlled by matrix transformation primitives. I added a couple utility functions to help me index the arrays. The animation you see is the combination of two rotations multiplied together.
+</script>
+
+<script>
+var vs = my_vertex_shader.innerHTML,
+    fs = my_fragment_shader.innerHTML;
+    fs = fs.substring(1, fs.length);
+
+document.body.innerHTML = [''
+   ,'<center>Matrix Transformations</center>'
+   ,'<TABLE cellspacing=0 cellpadding=0><TR>'
+   ,'<td width=50></td><td><font color=red size=5><div id=errorMessage>&nbsp;</div></font></td>'
+   ,'</TR><TR>'
+   ,'<table cellspacing=10>'
+   ,'<tr>'
+   ,'<td valign=top><font size=2 color=red><div id=errorMarker>&nbsp;</div></font></td>'
+   ,'<td valign=top>'
+   ,'<textarea id=textArea spellcheck=false '
+   ,'style="outline-width:0;border-style:none;resize:none;overflow:scroll;"'
+   ,'></textarea>'
+   ,'</td><td valign=top>' + document.body.innerHTML + '</td>'
+   ,'<td valign=top>' + instructions.innerHTML + '</td>'
+   ,'</tr></table>'
+   ,'</TR></TABLE>'
+   ].join('');
+
+var i, text = fs.split('\n'), cols = 0;
+for (i = 0 ; i < text.length ; i++)
+   cols = Math.max(cols, text[i].length);
+
+textArea.rows = text.length;
+textArea.cols = cols;
+textArea.value = fs;
+textArea.style.color = 'white';
+textArea.onkeyup = function() { canvas1.setShaders(vs, this.value); }
+
+var startTime = Date.now();
+
+function animate(gl) {
+   let time = (Date.now() - startTime) / 1000;
+   setUniform('1f', 'uTime', time);
+
+   // EXAMPLE OF SETTING UNIFORM SHADER VARIABLE uMat
+
+   let z = 10 * Math.sin(2 * time);
+   setUniform('Matrix4fv', 'uMat', false, multiply(rotateY(time), rotateX(time)));
+}
+
+function zero() {
+  return [0, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 0, 0];
+}
+
+function identity() {
+  return [1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1];
+}
+
+function translate(tx, ty, tz) {
+  return [1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          tx, ty, tz, 1];
+}
+
+function rotateX(theta) {
+  let matrix = identity();
+
+  matrix[y(1)] = Math.cos(theta);
+  matrix[y(2)] = Math.sin(theta);
+
+  matrix[z(1)] = -Math.sin(theta);
+  matrix[z(2)] = Math.cos(theta);
+
+  return matrix;
+}
+
+function rotateY(theta) {
+  let matrix = identity();
+
+  matrix[x(0)] = Math.cos(theta);
+  matrix[x(2)] = -Math.sin(theta);
+
+  matrix[z(0)] = Math.sin(theta);
+  matrix[z(2)] = Math.cos(theta);
+
+  return matrix;
+}
+
+function rotateZ(theta) {
+  let matrix = identity();
+
+  matrix[x(0)] = Math.cos(theta);
+  matrix[x(1)] = Math.sin(theta);
+
+  matrix[y(0)] = -Math.sin(theta);
+  matrix[y(1)] = Math.cos(theta);
+
+  return matrix;
+}
+
+function scale(sx, sy, sz) {
+  if (sy === undefined && sz === undefined) {
+    sy = sx;
+    sz = sx;
+  }
+  return [sx, 0, 0, 0,
+          0, sy, 0, 0,
+          0, 0, sz, 0,
+          0, 0, 0, 1];
+}
+
+function multiply(rmatrix, lmatrix) {
+  let matrix = zero();
+  for (let x = 0; x < 4; x++) {
+    for (let y = 0; y < 4; y++) {
+      for (let i = 0; i < 4; i++) {
+        matrix[coordsToIndex(x, y)] += rmatrix[coordsToIndex(i, y)] * lmatrix[coordsToIndex(x, i)];
+      }
+    }
+  }
+
+  return matrix;
+}
+
+// top left is 0, 0
+function coordsToIndex(x, y) {
+  return x * 4 + y;
+}
+
+function x(index) {
+  return coordsToIndex(0, index);
+}
+
+function y(index) {
+  return coordsToIndex(1, index);
+}
+
+function z(index) {
+  return coordsToIndex(2, index);
+}
+
+function t(index) {
+  return coordsToIndex(3, index);
+}
+
+function print(matrix) {
+  for (let y = 0; y < 4; y++) {
+    let str = "";
+    for (let x = 0; x < 4; x++) {
+      str += matrix[coordsToIndex(x, y)] + ", "
+    }
+    console.log(str)
+  }
+}
+gl_start(canvas1, vs, fs);
+</script>
