@@ -6,11 +6,35 @@
 
 body {
   padding-top: 20px;
+  padding-bottom: 60px;
 }
 
 textarea {
   background-color: black !important;
   overflow: auto !important;
+  color: white;
+  /* display: none; */
+}
+
+table {
+  margin: 0 auto;
+}
+
+#description {
+  margin: 0 auto;
+  margin-top: 20px;
+  font-style: italic;
+  width: 445px;
+}
+
+h1 {
+  width: 445px;
+  margin: 0 auto;
+}
+
+canvas {
+  border: 1px solid white;
+  margin-top: 20px;
 }
 </style>
 
@@ -18,7 +42,7 @@ textarea {
 
 <body bgcolor=black text=white link=white alink=white vlink=white>
 <center>
-<canvas id='canvas1' width=400 height=400></canvas>
+<canvas id='canvas1' width=445 height=445></canvas>
 </center>
 </body>
 
@@ -59,10 +83,14 @@ void main() {
    gl_FragColor = vec4(sqrt(color), 1.0);
 }</script>
 
-<script id='instructions' type='text/html'><font color=#b0b0b0>
-<b>Description</b>
-<p>
-I made some eyeballs out of hierarchical animation techniques.
+<script id='instructions' type='text/html'>
+<div id='description'>
+  <p>I created a shape from splines, and animated along a path of bezier splines and hermite splines.</p>
+
+  <p>Both splines are calculated by using matrix/vector multipication, which gives parameters to pass into a general
+  use cubic function evaluator.</p>
+</div>
+
 </script>
 
 <script>
@@ -71,7 +99,9 @@ var vs = my_vertex_shader.innerHTML,
     fs = fs.substring(1, fs.length);
 
 document.body.innerHTML = [''
-   ,'<center><font size=6 color=#b0b0b0>Assignment 8: Animating hierarchical models</center>'
+   ,'<h1>Assignment 9: Splines</h1>'
+   , instructions.innerHTML
+   , document.body.innerHTML
    ,'<TABLE cellspacing=0 cellpadding=0><TR>'
    ,'<td width=50></td><td><font color=red size=5><div id=errorMessage>&nbsp;</div></font></td>'
    ,'</TR><TR>'
@@ -82,8 +112,8 @@ document.body.innerHTML = [''
    ,'<textArea id=textArea spellcheck=false '
    ,'style="font:16px courier;outline-width:0;border-style:none;resize:none;overflow:scroll;"'
    ,'></textArea>'
-   ,'</td><td valign=top>' + document.body.innerHTML + '</td>'
-   ,'<td valign=top><font size=5>' + instructions.innerHTML + '</td>'
+   ,'</td>'
+   // ,'<td valign=top><font size=5>' + instructions.innerHTML + '</td>'
    ,'</tr></table>'
    ,'</TR></TABLE>'
    ].join('');
@@ -96,12 +126,21 @@ textArea.rows = text.length;
 textArea.cols = cols;
 textArea.value = fs;
 textArea.style.backgroundColor = '#202020';
-textArea.style.color = 'white';
+// textArea.style.color = 'white';
 textArea.onkeyup = function() { canvas1.setShaders(vs, this.value); }
 
 var startTime = Date.now();
 
 // RETURNS ONE VERTEX OF A UNIT SPHERE, GIVEN PARAMETRIC u,v
+
+// function sphereVertex(u, v) {
+//   let theta = 2 * Math.PI * u;
+//   let phi   = Math.PI * (v - .5);
+//   let x = Math.cos(phi) * Math.cos(theta);
+//   let y = Math.cos(phi) * Math.sin(theta);
+//   let z = Math.sin(phi);
+//   return [x, y, z, x, y, z, u, v]; // pos, normal, u, v
+// }
 
 function sphereVertex(u, v) {
   let theta = 2 * Math.PI * u;
@@ -109,7 +148,25 @@ function sphereVertex(u, v) {
   let x = Math.cos(phi) * Math.cos(theta);
   let y = Math.cos(phi) * Math.sin(theta);
   let z = Math.sin(phi);
+
   return [x, y, z, x, y, z, u, v]; // pos, normal, u, v
+}
+
+function variedSphereVertex(funcX, funcY, funcZ) {
+  if (!funcY) {
+    funcY = funcX;
+    funcZ = funcX;
+  }
+
+  return (u, v) => {
+    let theta = 2 * Math.PI * u;
+    let phi   = Math.PI * (v - .5);
+    let x = Math.cos(phi) * Math.cos(theta);
+    let y = Math.cos(phi) * Math.sin(theta);
+    let z = Math.sin(phi);
+
+    return [funcX(x), funcY(y), funcZ(z), x, y, z, u, v];//, x, y, z, u, v]; // pos, normal, u, v
+  }
 }
 
 function cylinderVertex(u, v) {
@@ -150,9 +207,8 @@ function createParametricShape(func, nu, nv) {
 
 // GENERATE THE TRIANGLE STRIP FOR A SPHERE
 
-var sphereTriangleStrip = createParametricShape(sphereVertex, 20, 10);
+var sphereTriangles = createParametricShape(sphereVertex, 20, 10);
 var cylinderTriangles = createParametricShape(cylinderVertex, 20, 5);
-var cubeTriangles = createParametricShape(cubeVertex, 4, 5);
 
 function zero() {
   return [0, 0, 0, 0,
@@ -336,8 +392,17 @@ function render(gl, m, triangles, objMat, color) {
 
 let ms = M(); // matrix stack
 
+let bezierFunc = cubicFunction(bezierSpline(0., 0.25, 0.75, 1.));
+let triangles = createParametricShape(variedSphereVertex(bezierFunc, y => y, bezierFunc), 20, 20);
+
+let fz = cubicFunction(bezierSpline(-0.5, 0.1, 0.25, 1))
+let fx = cubicFunction(hermiteSpline(-0.5, 0.75, -0.5, 0.5))
+let fy = cubicFunction(bezierSpline(-0.5, 0.25, 0.28, 0.5))
+
 function animate(gl) {
    let time = (Date.now() - startTime) / 1000;
+
+   // let bezierFunc = cubicFunction(hermiteSpline(1., 0., Math.sin(time), 0.7));
 
    setUniform('1f', 'uTime', time);
    setUniform('3fv', 'uCursor', cursor);
@@ -354,42 +419,15 @@ function animate(gl) {
           0,  0,         0,     1
    ]);
 
-   let center = [Math.sin(time), 0.5, 0.5];
-
    ms.save();
-   ms.multi(translate(center[0] - 1.5, center[1], center[2]));
+   ms.multi(rotateY(Math.PI * Math.sin(time)));
+   ms.multi(rotateX(Math.PI * Math.sin(time)));
+   ms.multi(scale(0.2, 0.2, 0.2));
+   ms.multi(translate(fx(Math.tan(time / 2)), fy(Math.tan(time / 2)), fz(Math.tan(time / 2))));
 
-   ms.save();
-   ms.multi(scale(0.25, 0.25, 0.025));
-   render(gl, ms, cylinderTriangles, ms.matrix(), [1., 1., 1.]);
-   ms.restore();
-
-   ms.save()
-   ms.multi(translate(-2.0, 0, 0));
-   ms.multi(scale(0.1, 0.1, 0.025));
-   render(gl, ms, cylinderTriangles, ms.matrix(), [0.05, 0.01, 0.01]);
-   ms.restore();
-
-   ms.restore();
-
-   ms.save();
-   ms.multi(translate(center[0] + 1.5, center[1], center[2]));
-
-   ms.save();
-   ms.multi(scale(0.25, 0.25, 0.025));
-   render(gl, ms, cylinderTriangles, ms.matrix(), [1., 1., 1.]);
-   ms.restore();
-
-   ms.save()
-   ms.multi(translate(2.25, 0, 0));
-   ms.multi(scale(0.1, 0.1, 0.025));
-   render(gl, ms, cylinderTriangles, ms.matrix(), [0.05, 0.01, 0.01]);
-   ms.restore();
-
+   render(gl, ms, triangles, ms.matrix(), [1., 1., 1.]);
    ms.restore();
 }
-
-
 
 gl_start(canvas1, vs, fs);
 </script>
