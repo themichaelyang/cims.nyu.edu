@@ -354,6 +354,14 @@ function bezierSpline(A, B, C, D) {
   return multiplyMV(bezier, [A, B, C, D]);
 }
 
+function bSpline(A, B, C, D) {
+  let b = [-1/6, -1/2, -1/2, 1/6,
+            1/2, -1, 1/2, 0,
+            -1/2, 0, 1/2, 0,
+            1/6, 2/3, 2/3, 0];
+  return multiplyMV(b, [A, B, C, D]);
+}
+
 let M = function() {
   let m = {};
 
