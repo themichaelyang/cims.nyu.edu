@@ -518,9 +518,9 @@ function bezierSpline(A, B, C, D) {
 
 function bezierBicubicSurface(controlX, controlY, controlZ) {
   let bezier = fix([-1, 3,-3, 1,
-                3, -6, 3, 0,
-                -3, 3, 0, 0,
-                1, 0, 0, 0]);
+                    3, -6, 3, 0,
+                   -3, 3, 0, 0,
+                    1, 0, 0, 0]);
   return (u, v) => {
     let vcubic = [v**3, v**2, v, 1];
     let ucubic = [u**3, u**2, u, 1];
@@ -724,14 +724,22 @@ function animate(gl) {
 
    // for (let surface of surfaces) {
       ms.save();
-      // ms.multi(rotateY(Math.PI * Math.sin(time)));
-      ms.multi(rotateX(Math.PI * Math.sin(time)));
+
+
+
+      ms.multi(rotateY(Math.PI * Math.sin(time)));
+
       ms.multi(scale(0.001, 0.001, 0.001));
-      // ms.multi(translate(-2.8, 0, 0));
+      ms.save()
+
+      ms.multi(rotateX(Math.PI * Math.sin(time)));
+      ms.multi(rotateZ(Math.PI * Math.sin(time)));
+
       // ms.multi(translate(fx(Math.tan(time / 2)), fy(Math.tan(time / 2)), fz(Math.tan(time / 2))));
 
       // render(gl, ms, triangles, ms.matrix(), [1., 1., 1.]);
       render(gl, ms, surface, ms.matrix(), [1., 1., 1.]);
+      ms.restore();
       ms.restore();
     // }
 }

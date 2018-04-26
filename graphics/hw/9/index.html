@@ -334,31 +334,43 @@ function multiplyMV(matrix, vector) {
   return result;
 }
 
+function fix(matrix) { // get transpose of 4 x 4 flat matrix
+  let trans = []
+
+  for (let x = 0; x < 4; x++) {
+    for (let y = 0; y < 4; y++) {
+      trans[coordsToIndex(y, x)] = matrix[coordsToIndex(x, y)]
+    }
+  }
+
+  return trans
+}
+
 function cubicFunction(parameters) {
   return (t) => parameters.reduce((acc, val, i) => acc + val * t ** i, 0)
 }
 
 function hermiteSpline(p0, p1, r0, r1) {
-  let hermite = [2, -2, 1, 1,
+  let hermite = fix([2, -2, 1, 1,
                 -3, 3, -2, -1,
                  0, 0, 1, 0,
-                 1, 0, 0, 0];
+                 1, 0, 0, 0]);
   return multiplyMV(hermite, [p0, p1, r0, r1]);
 }
 
 function bezierSpline(A, B, C, D) {
-  let bezier = [-1, 3,-3, 1,
+  let bezier = fix([-1, 3,-3, 1,
                 3, -6, 3, 0,
                 -3, 3, 0, 0,
-                1, 0, 0, 0];
+                1, 0, 0, 0]);
   return multiplyMV(bezier, [A, B, C, D]);
 }
 
 function bSpline(A, B, C, D) {
-  let b = [-1/6, -1/2, -1/2, 1/6,
+  let b = fix([-1/6, -1/2, -1/2, 1/6,
             1/2, -1, 1/2, 0,
             -1/2, 0, 1/2, 0,
-            1/6, 2/3, 2/3, 0];
+            1/6, 2/3, 2/3, 0]);
   return multiplyMV(b, [A, B, C, D]);
 }
 
@@ -403,9 +415,14 @@ let ms = M(); // matrix stack
 let bezierFunc = cubicFunction(bezierSpline(0., 0.25, 0.75, 1.));
 let triangles = createParametricShape(variedSphereVertex(bezierFunc, y => y, bezierFunc), 20, 20);
 
-let fz = cubicFunction(bezierSpline(-0.5, 0.1, 0.25, 1))
-let fx = cubicFunction(hermiteSpline(-0.5, 0.75, -0.5, 0.5))
-let fy = cubicFunction(bezierSpline(-0.5, 0.25, 0.28, 0.5))
+// let fz = cubicFunction(bezierSpline(-1, 0.1, 0.25, 1))
+// let fx = cubicFunction(hermiteSpline(-1, 0.25, 0.5, 1))
+// let fz = cubicFunction(bezierSpline(-0.5, 0.2, 0.4, 0.5))//(x) => x;
+// let fx = cubicFunction(bezierSpline(-0.5, 0.2, 0.4, 0.5))//(x) => x;
+let fx = cubicFunction(hermiteSpline(-0.3, 0.06, 0.12, 0.4));
+let fz = (z) => z;
+
+let fy = cubicFunction(bezierSpline(-0.4, 0.25, 0.28, 0.4))
 
 function animate(gl) {
    let time = (Date.now() - startTime) / 1000;
@@ -417,6 +434,7 @@ function animate(gl) {
 
    var zRange = 10; // DEFINE A RANGE FOR Z VALUES
    var fl = 3;      // FOCAL LENGTH OF VIRTUAL CAMERA
+   let scaling = 2
 
    // DEFINE THE PERSPECTIVE PROJECTION MATRIX
 
@@ -430,8 +448,9 @@ function animate(gl) {
    ms.save();
    ms.multi(rotateY(Math.PI * Math.sin(time)));
    ms.multi(rotateX(Math.PI * Math.sin(time)));
-   ms.multi(scale(0.2, 0.2, 0.2));
-   ms.multi(translate(fx(Math.tan(time / 2)), fy(Math.tan(time / 2)), fz(Math.tan(time / 2))));
+   ms.multi(scale(0.1, 0.1, 0.1));
+   ms.multi(translate(fx(Math.tan(time / scaling)), fy(Math.tan(time / scaling)), fz(Math.tan(time / scaling))));
+   ms.multi(translate(0.5, 0, 0))
 
    render(gl, ms, triangles, ms.matrix(), [1., 1., 1.]);
    ms.restore();
