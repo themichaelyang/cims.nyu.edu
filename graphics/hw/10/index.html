@@ -527,8 +527,11 @@ function bezierBicubicSurface(controlX, controlY, controlZ) {
     let vbez = multiplyVM(vcubic, bezier);
 
     let xbez = multiplyVM(vbez, controlX)
+    xbez = multiplyVM(xbez, bezier)
     let ybez = multiplyVM(vbez, controlY)
+    ybez = multiplyVM(ybez, bezier)
     let zbez = multiplyVM(vbez, controlZ)
+    zbez = multiplyVM(zbez, bezier)
 
     let x = dotprod(xbez, ucubic)
     let y = dotprod(ybez, ucubic)
@@ -656,9 +659,9 @@ let control = [[...[0,0,0],  ...[2,-1,0], ...[4,-1,0], ...[6, 0, 0] ],
 console.log('surf')
 console.log(readSurfaceData(teapot_data[1]))
 
-let surface = []
+let surfaces = []
 for (let ti = 0; ti < teapot_data.length; ti++) {
-  surface.push(...createParametricShape(bezierBicubicSurface(...readSurfaceData(teapot_data[ti])),
+  surfaces.push(createParametricShape(bezierBicubicSurface(...readSurfaceData(teapot_data[ti])),
                       20, 20))
 }
 // let surf = createParametricShape(bezierBicubicSurface(...readSurfaceData(control)), 5, 5)
@@ -722,14 +725,14 @@ function animate(gl) {
           0,  0,         0,     1
    ]);
 
-   // for (let surface of surfaces) {
+   for (let surface of surfaces) {
       ms.save();
 
 
 
       ms.multi(rotateY(Math.PI * Math.sin(time)));
 
-      ms.multi(scale(0.001, 0.001, 0.001));
+      ms.multi(scale(0.005, 0.005, 0.005));
       ms.save()
 
       ms.multi(rotateX(Math.PI * Math.sin(time)));
@@ -741,7 +744,7 @@ function animate(gl) {
       render(gl, ms, surface, ms.matrix(), [1., 1., 1.]);
       ms.restore();
       ms.restore();
-    // }
+    }
 }
 
 gl_start(canvas1, vs, fs);
