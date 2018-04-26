@@ -77,7 +77,7 @@ function gl_start(canvas, vertexShader, fragmentShader) {           // START WEB
    canvas.onmouseup   = function(event) { setMouse(0); } // On mouse up  , set z to 0.
 
    setTimeout(function() {
-      try { 
+      try {
          canvas.gl = canvas.getContext('experimental-webgl');              // Make sure WebGl is supported.
       } catch (e) { throw 'Sorry, your browser does not support WebGL.'; }
 
@@ -175,4 +175,3 @@ function matrixInvert(src) {                                        // Invert a 
   for (n = 0 ; n < 16 ; n++) dst[n] /= det;
   return dst;
 }
-

@@ -75,20 +75,39 @@ uniform vec3  uRGB;
 uniform mat4 uMat[3];
 
 void main() {
-   vec3 normal = normalize(vNor);
-   vec3 lDir = normalize(vec3(1.,1.,1.));
-   float c = 0.1 + 0.9 * max(0.,
-             dot(normal, lDir));
-   vec3 color = uRGB * c;
-   gl_FragColor = vec4(sqrt(color), 1.0);
+
+  vec3 normal = normalize(vNor);
+  vec3 lDir = normalize(vec3(1.,1.,1.));
+  float a = 0.1 + 0.9 * max(0.,
+           dot(normal, lDir));
+  // vec3 color = uRGB * c;
+  // gl_FragColor = vec4(sqrt(color), 1.0);
+
+  float f = 1.;
+  vec3 W = normalize(vec3(vPos.x, vPos.y, -f));
+  vec3 E = -W;
+
+  vec3 R = (2. * dot(normal, lDir) * normal) - lDir;
+  float p = 3.;
+
+  float d1 = 0.05; // specular
+  float d2 = .05; // diffuse
+  // float a = 0.1;
+
+  float c1 = pow(max(0., dot(E, R)), p);
+  float c2 = max(0., dot(normal, lDir));
+
+  float c = d1 * c1 + d2 * c2 + a;
+
+  // c = step(0., normal.z) * .5 * c;
+  // vec3 color = vec3(4. * c, 0.3 * c, 0.3 * c);
+  vec3 color = uRGB * c;
+  gl_FragColor = vec4(sqrt(color), 1.0);
 }</script>
 
 <script id='instructions' type='text/html'>
 <div id='description'>
-  <p>I created a shape from splines, and animated along a path of bezier splines and hermite splines.</p>
-
-  <p>Both splines are calculated by using matrix/vector multipication, which gives parameters to pass into a general
-  use cubic function evaluator.</p>
+  <p>I rendered the Utah teapot using multiple bezier surfaces, but using the coordinates as the normals. I also added the Phong reflectance model.</p>
 </div>
 
 </script>
@@ -99,7 +118,7 @@ var vs = my_vertex_shader.innerHTML,
     fs = fs.substring(1, fs.length);
 
 document.body.innerHTML = [''
-   ,'<h1>Assignment 9: Splines</h1>'
+   ,'<h1>Assignment 10: Bezier Surfaces</h1>'
    , instructions.innerHTML
    , document.body.innerHTML
    ,'<TABLE cellspacing=0 cellpadding=0><TR>'
@@ -608,7 +627,7 @@ function surfaceToNormals(v) {
     a = subtract(v[(i+1) % N], v[i]);
     b = subtract(v[(i+2) % N], v[(i+1) % N]);
 
-    faceNormal = crossProduct(a, b);
+    faceNormal.map((z) => z + crossProduct(a, b));
   }
   return faceNormal
 }
@@ -626,6 +645,7 @@ function readSurfaceData(data) {
   // returns three matrices for x, y, z control points
 }
 
+// doesn't work
 function addSurfaceNormals(points) {
   let final = []
   for (let i = 0; i < points.length - 4; i += 3) {
@@ -635,9 +655,9 @@ function addSurfaceNormals(points) {
     final.push(...[points[i], points[i + 1], points[i + 2]])
     final.push(...norm)
     final.push(...[0, 0])
-    final.push(...[points[i + 3], points[i + 4], points[i + 5]])
-    final.push(...norm)
-    final.push(...[0, 0])
+    // final.push(...[points[i + 3], points[i + 4], points[i + 5]])
+    // final.push(...norm)
+    // final.push(...[0, 0])
   }
 
   return final
@@ -663,9 +683,10 @@ let surfaces = []
 for (let ti = 0; ti < teapot_data.length; ti++) {
   surfaces.push(createParametricShape(bezierBicubicSurface(...readSurfaceData(teapot_data[ti])),
                       20, 20))
+  // addSurfaceNormals(surfaces[ti])
 }
 // let surf = createParametricShape(bezierBicubicSurface(...readSurfaceData(control)), 5, 5)
-// addSurfaceNormals(surf)
+
 
 let M = function() {
   let m = {};
@@ -705,8 +726,11 @@ function render(gl, m, triangles, objMat, color) {
 
 let ms = M(); // matrix stack
 
+let red = [1., 0.125, 0.1];
+let white = [1., 1., 1.];
+let grey = [.9, .9, .9];
 function animate(gl) {
-   let time = (Date.now() - startTime) / 1000;
+   let time = ((Date.now() - startTime) / 1000) % 100;
 
    // let bezierFunc = cubicFunction(hermiteSpline(1., 0., Math.sin(time), 0.7));
 
@@ -726,22 +750,23 @@ function animate(gl) {
    ]);
 
    for (let surface of surfaces) {
+     ms.save();
+     ms.multi(scale(0.005, 0.005, 0.005));
+
       ms.save();
+      ms.multi(translate(0, 0, -0.25))
 
-
-
-      ms.multi(rotateY(Math.PI * Math.sin(time)));
-
-      ms.multi(scale(0.005, 0.005, 0.005));
       ms.save()
+      ms.multi(rotateX(Math.PI / 2));
+      ms.multi(rotateZ(Math.PI / 2 * time / 4));
+      ms.multi(rotateY(Math.PI * time / 2));
 
-      ms.multi(rotateX(Math.PI * Math.sin(time)));
-      ms.multi(rotateZ(Math.PI * Math.sin(time)));
+      ms.save();
+      ms.multi(translate(0, 0, 0.25))
 
-      // ms.multi(translate(fx(Math.tan(time / 2)), fy(Math.tan(time / 2)), fz(Math.tan(time / 2))));
-
-      // render(gl, ms, triangles, ms.matrix(), [1., 1., 1.]);
-      render(gl, ms, surface, ms.matrix(), [1., 1., 1.]);
+      render(gl, ms, surface, ms.matrix(), white);
+      ms.restore()
+      ms.restore();
       ms.restore();
       ms.restore();
     }

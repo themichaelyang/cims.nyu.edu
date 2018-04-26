@@ -2,7 +2,7 @@
   body {
     padding: 10px;
     padding-top: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: white;
   }
   p {
@@ -91,7 +91,7 @@ void main() {
    if (N2.z > N1.z) {
      N = N2;
    }
-   
+
    vec3 R = (2. * dot(N, L) * N) - L;
    float p = 7.;
 
@@ -118,7 +118,7 @@ void main() {
 </script>
 
 <!!-------- YOU PROBABLY DON'T WANT TO CHANGE ANYTHING BELOW FOR NOW -------->
-   
+
 <script>
 var vs = my_vertex_shader.innerHTML,
     fs = my_fragment_shader.innerHTML;
@@ -160,4 +160,3 @@ function animate(gl) {
 
 gl_start(canvas1, vs, fs);
 </script>
-
