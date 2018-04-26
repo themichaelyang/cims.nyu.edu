@@ -142,71 +142,71 @@ var startTime = Date.now();
 //   return [x, y, z, x, y, z, u, v]; // pos, normal, u, v
 // }
 
-let teapot_data = [ // 0
+let teapot_data = [[ // 0
  -80.00,   0.00,  30.00,  -80.00, -44.80,  30.00,  -44.80, -80.00,  30.00,    0.00, -80.00,  30.00,
  -80.00,   0.00,  12.00,  -80.00, -44.80,  12.00,  -44.80, -80.00,  12.00,    0.00, -80.00,  12.00,
  -60.00,   0.00,   3.00,  -60.00, -33.60,   3.00,  -33.60, -60.00,   3.00,    0.00, -60.00,   3.00,
- -60.00,   0.00,   0.00,  -60.00, -33.60,   0.00,  -33.60, -60.00,   0.00,    0.00, -60.00,   0.00,
+ -60.00,   0.00,   0.00,  -60.00, -33.60,   0.00,  -33.60, -60.00,   0.00,    0.00, -60.00,   0.00
 ],[
   0.00, -80.00,  30.00,   44.80, -80.00,  30.00,   80.00, -44.80,  30.00,   80.00,   0.00,  30.00,
   0.00, -80.00,  12.00,   44.80, -80.00,  12.00,   80.00, -44.80,  12.00,   80.00,   0.00,  12.00,
   0.00, -60.00,   3.00,   33.60, -60.00,   3.00,   60.00, -33.60,   3.00,   60.00,   0.00,   3.00,
-  0.00, -60.00,   0.00,   33.60, -60.00,   0.00,   60.00, -33.60,   0.00,   60.00,   0.00,   0.00,
+  0.00, -60.00,   0.00,   33.60, -60.00,   0.00,   60.00, -33.60,   0.00,   60.00,   0.00,   0.00
 ],[
  -60.00,   0.00,  90.00,  -60.00, -33.60,  90.00,  -33.60, -60.00,  90.00,    0.00, -60.00,  90.00,
  -70.00,   0.00,  69.00,  -70.00, -39.20,  69.00,  -39.20, -70.00,  69.00,    0.00, -70.00,  69.00,
  -80.00,   0.00,  48.00,  -80.00, -44.80,  48.00,  -44.80, -80.00,  48.00,    0.00, -80.00,  48.00,
- -80.00,   0.00,  30.00,  -80.00, -44.80,  30.00,  -44.80, -80.00,  30.00,    0.00, -80.00,  30.00,
+ -80.00,   0.00,  30.00,  -80.00, -44.80,  30.00,  -44.80, -80.00,  30.00,    0.00, -80.00,  30.00
 ],[
   0.00, -60.00,  90.00,   33.60, -60.00,  90.00,   60.00, -33.60,  90.00,   60.00,   0.00,  90.00,
   0.00, -70.00,  69.00,   39.20, -70.00,  69.00,   70.00, -39.20,  69.00,   70.00,   0.00,  69.00,
   0.00, -80.00,  48.00,   44.80, -80.00,  48.00,   80.00, -44.80,  48.00,   80.00,   0.00,  48.00,
-  0.00, -80.00,  30.00,   44.80, -80.00,  30.00,   80.00, -44.80,  30.00,   80.00,   0.00,  30.00,
+  0.00, -80.00,  30.00,   44.80, -80.00,  30.00,   80.00, -44.80,  30.00,   80.00,   0.00,  30.00
 ],[
  -56.00,   0.00,  90.00,  -56.00, -31.36,  90.00,  -31.36, -56.00,  90.00,    0.00, -56.00,  90.00,
  -53.50,   0.00,  95.25,  -53.50, -29.96,  95.25,  -29.96, -53.50,  95.25,    0.00, -53.50,  95.25,
  -57.50,   0.00,  95.25,  -57.50, -32.20,  95.25,  -32.20, -57.50,  95.25,    0.00, -57.50,  95.25,
- -60.00,   0.00,  90.00,  -60.00, -33.60,  90.00,  -33.60, -60.00,  90.00,    0.00, -60.00,  90.00,
+ -60.00,   0.00,  90.00,  -60.00, -33.60,  90.00,  -33.60, -60.00,  90.00,    0.00, -60.00,  90.00
 ],[ // 5
   0.00, -56.00,  90.00,   31.36, -56.00,  90.00,   56.00, -31.36,  90.00,   56.00,   0.00,  90.00,
   0.00, -53.50,  95.25,   29.96, -53.50,  95.25,   53.50, -29.96,  95.25,   53.50,   0.00,  95.25,
   0.00, -57.50,  95.25,   32.20, -57.50,  95.25,   57.50, -32.20,  95.25,   57.50,   0.00,  95.25,
-  0.00, -60.00,  90.00,   33.60, -60.00,  90.00,   60.00, -33.60,  90.00,   60.00,   0.00,  90.00,
+  0.00, -60.00,  90.00,   33.60, -60.00,  90.00,   60.00, -33.60,  90.00,   60.00,   0.00,  90.00
 ],[
  80.00,   0.00,  30.00,   80.00,  44.80,  30.00,   44.80,  80.00,  30.00,    0.00,  80.00,  30.00,
  80.00,   0.00,  12.00,   80.00,  44.80,  12.00,   44.80,  80.00,  12.00,    0.00,  80.00,  12.00,
  60.00,   0.00,   3.00,   60.00,  33.60,   3.00,   33.60,  60.00,   3.00,    0.00,  60.00,   3.00,
- 60.00,   0.00,   0.00,   60.00,  33.60,   0.00,   33.60,  60.00,   0.00,    0.00,  60.00,   0.00,
+ 60.00,   0.00,   0.00,   60.00,  33.60,   0.00,   33.60,  60.00,   0.00,    0.00,  60.00,   0.00
 ],[
   0.00,  80.00,  30.00,  -44.80,  80.00,  30.00,  -80.00,  44.80,  30.00,  -80.00,   0.00,  30.00,
   0.00,  80.00,  12.00,  -44.80,  80.00,  12.00,  -80.00,  44.80,  12.00,  -80.00,   0.00,  12.00,
   0.00,  60.00,   3.00,  -33.60,  60.00,   3.00,  -60.00,  33.60,   3.00,  -60.00,   0.00,   3.00,
-  0.00,  60.00,   0.00,  -33.60,  60.00,   0.00,  -60.00,  33.60,   0.00,  -60.00,   0.00,   0.00,
+  0.00,  60.00,   0.00,  -33.60,  60.00,   0.00,  -60.00,  33.60,   0.00,  -60.00,   0.00,   0.00
 ],[
  60.00,   0.00,  90.00,   60.00,  33.60,  90.00,   33.60,  60.00,  90.00,    0.00,  60.00,  90.00,
  70.00,   0.00,  69.00,   70.00,  39.20,  69.00,   39.20,  70.00,  69.00,    0.00,  70.00,  69.00,
  80.00,   0.00,  48.00,   80.00,  44.80,  48.00,   44.80,  80.00,  48.00,    0.00,  80.00,  48.00,
- 80.00,   0.00,  30.00,   80.00,  44.80,  30.00,   44.80,  80.00,  30.00,    0.00,  80.00,  30.00,
+ 80.00,   0.00,  30.00,   80.00,  44.80,  30.00,   44.80,  80.00,  30.00,    0.00,  80.00,  30.00
 ],[
   0.00,  60.00,  90.00,  -33.60,  60.00,  90.00,  -60.00,  33.60,  90.00,  -60.00,   0.00,  90.00,
   0.00,  70.00,  69.00,  -39.20,  70.00,  69.00,  -70.00,  39.20,  69.00,  -70.00,   0.00,  69.00,
   0.00,  80.00,  48.00,  -44.80,  80.00,  48.00,  -80.00,  44.80,  48.00,  -80.00,   0.00,  48.00,
-  0.00,  80.00,  30.00,  -44.80,  80.00,  30.00,  -80.00,  44.80,  30.00,  -80.00,   0.00,  30.00,
+  0.00,  80.00,  30.00,  -44.80,  80.00,  30.00,  -80.00,  44.80,  30.00,  -80.00,   0.00,  30.00
 ],[ // 10
  56.00,   0.00,  90.00,   56.00,  31.36,  90.00,   31.36,  56.00,  90.00,    0.00,  56.00,  90.00,
  53.50,   0.00,  95.25,   53.50,  29.96,  95.25,   29.96,  53.50,  95.25,    0.00,  53.50,  95.25,
  57.50,   0.00,  95.25,   57.50,  32.20,  95.25,   32.20,  57.50,  95.25,    0.00,  57.50,  95.25,
- 60.00,   0.00,  90.00,   60.00,  33.60,  90.00,   33.60,  60.00,  90.00,    0.00,  60.00,  90.00,
+ 60.00,   0.00,  90.00,   60.00,  33.60,  90.00,   33.60,  60.00,  90.00,    0.00,  60.00,  90.00
 ],[
   0.00,  56.00,  90.00,  -31.36,  56.00,  90.00,  -56.00,  31.36,  90.00,  -56.00,   0.00,  90.00,
   0.00,  53.50,  95.25,  -29.96,  53.50,  95.25,  -53.50,  29.96,  95.25,  -53.50,   0.00,  95.25,
   0.00,  57.50,  95.25,  -32.20,  57.50,  95.25,  -57.50,  32.20,  95.25,  -57.50,   0.00,  95.25,
-  0.00,  60.00,  90.00,  -33.60,  60.00,  90.00,  -60.00,  33.60,  90.00,  -60.00,   0.00,  90.00,
+  0.00,  60.00,  90.00,  -33.60,  60.00,  90.00,  -60.00,  33.60,  90.00,  -60.00,   0.00,  90.00
 ],[
  -64.00,   0.00,  75.00,  -64.00,  12.00,  75.00,  -60.00,  12.00,  84.00,  -60.00,   0.00,  84.00,
  -92.00,   0.00,  75.00,  -92.00,  12.00,  75.00, -100.00,  12.00,  84.00, -100.00,   0.00,  84.00,
    -108.00,   0.00,  75.00, -108.00,  12.00,  75.00, -120.00,  12.00,  84.00, -120.00,   0.00,  84.00,
-   -108.00,   0.00,  66.00, -108.00,  12.00,  66.00, -120.00,  12.00,  66.00, -120.00,   0.00,  66.00,
+   -108.00,   0.00,  66.00, -108.00,  12.00,  66.00, -120.00,  12.00,  66.00, -120.00,   0.00,  66.00
 ],[
  -60.00,   0.00,  84.00,  -60.00, -12.00,  84.00,  -64.00, -12.00,  75.00,  -64.00,   0.00,  75.00,
    -100.00,   0.00,  84.00, -100.00, -12.00,  84.00,  -92.00, -12.00,  75.00,  -92.00,   0.00,  75.00,
@@ -509,53 +509,135 @@ function hermiteSpline(p0, p1, r0, r1) {
 }
 
 function bezierSpline(A, B, C, D) {
-  let bezier = [-1, 3,-3, 1,
+  let bezier = fix([-1, 3,-3, 1,
                 3, -6, 3, 0,
                 -3, 3, 0, 0,
-                1, 0, 0, 0];
+                1, 0, 0, 0]);
   return multiplyMV(bezier, [A, B, C, D]);
 }
 
-function bezierBicubicSurface(u, v, control) {
-  let vcubic = [v**3, v**2, v, 1];
-  let bezier = [-1, 3,-3, 1,
+function bezierBicubicSurface(controlX, controlY, controlZ) {
+  let bezier = fix([-1, 3,-3, 1,
                 3, -6, 3, 0,
                 -3, 3, 0, 0,
-                1, 0, 0, 0];
-  return bezierSpline(**multiplyMV(control, bezierSpline(u**3, u**2, u, 1))).map((el, index) => vcubic[index] * el)
+                1, 0, 0, 0]);
+  return (u, v) => {
+    let vcubic = [v**3, v**2, v, 1];
+    let ucubic = [u**3, u**2, u, 1];
+    let vbez = multiplyVM(vcubic, bezier);
+
+    let xbez = multiplyVM(vbez, controlX)
+    let ybez = multiplyVM(vbez, controlY)
+    let zbez = multiplyVM(vbez, controlZ)
+
+    let x = dotprod(xbez, ucubic)
+    let y = dotprod(ybez, ucubic)
+    let z = dotprod(zbez, ucubic)
+
+    // let bezU = bezierSpline(u**3, u**2, u, 1)
+    // let x = bezierSpline(...multiplyMV(controlX, bezU)).reduce((current, acc, index) => current * vcubic[index] + acc, 0)
+    // let x = bezierSpline(...multiplyMV(controlX, bezU)).reduce((current, acc, index) => current * vcubic[index] + acc, 0)
+    // let y = bezierSpline(...multiplyMV(controlY, bezU)).reduce((current, acc, index) => current * vcubic[index] + acc, 0)
+    // let z = bezierSpline(...multiplyMV(controlZ, bezU)).reduce((current, acc, index) => current * vcubic[index] + acc, 0)
+    return [x, y, z, x, y, z, u, v]
+  }
 }
 
-function bezierBicubicSurface(u, v, control) {
-  let vcubic = [v**3, v**2, v, 1];
-  let bezier = [-1, 3,-3, 1,
-                3, -6, 3, 0,
-                -3, 3, 0, 0,
-                1, 0, 0, 0];
-  // returns points
-  return bezierSpline(**multiplyMV(control, bezierSpline(u**3, u**2, u, 1))).map((el, index) => vcubic[index] * el)
+// bezier = bezierBicubicSurface()
+// createParametricShape()
+
+function dotprod(v1, v2) {
+  let result = 0;
+
+  for (let i = 0; i < v1.length; i++) {
+    result += v1[i] * v2[i]
+  }
+
+  return result
+}
+
+function fix(matrix) { // get transpose of 4 x 4 flat matrix
+  let trans = []
+
+  for (let x = 0; x < 4; x++) {
+    for (let y = 0; y < 4; y++) {
+      trans[coordsToIndex(y, x)] = matrix[coordsToIndex(x, y)]
+    }
+  }
+
+  return trans
+}
+
+function multiplyVM(row, mat) {
+  let result = [0, 0, 0, 0]
+
+  for (let y = 0; y < 4; y++) {
+    for (let x = 0; x < 4; x++) {
+      result[y] += row[x] * mat[coordsToIndex(y, x)];
+    }
+  }
+
+  return result;
+}
+
+// function bezierBicubicSurface(u, v, control) {
+//   let vcubic = [v**3, v**2, v, 1];
+//   let bezier = [-1, 3,-3, 1,
+//                 3, -6, 3, 0,
+//                 -3, 3, 0, 0,
+//                 1, 0, 0, 0];
+//   // returns points
+//   return bezierSpline(multiplyMV(control, bezierSpline(u**3, u**2, u, 1))).map((el, index) => vcubic[index] * el)
+// }
+
+function subtract(v1, v2) {
+  let result = []
+  for (let i = 0; i < v1.length; i++) {
+    result.push(v1[i] - v2[i])
+  }
+  return result
 }
 
 function surfaceToNormals(v) {
   let N = 2;
   let faceNormal = [0, 0, 0]
   for (let i = 0; i < N ; i++) {
-    a = v[(i+1) % N] - v[i];
-    b = v[(i+2) % N] - v[(i+1) % N];
-    faceNormal += cross(a, b);
+    a = subtract(v[(i+1) % N], v[i]);
+    b = subtract(v[(i+2) % N], v[(i+1) % N]);
+
+    faceNormal = crossProduct(a, b);
   }
   return faceNormal
 }
 
-// function readSurfaceData(data) {
-  // for ()
-// }
+function readSurfaceData(data) {
+  let xControl = []
+  let yControl = []
+  let zControl = []
+  for (let i = 0; i < data.length; i += 3) {
+      xControl.push(data[i])
+      yControl.push(data[i + 1])
+      zControl.push(data[i + 2])
+  }
+  return [xControl, yControl, zControl]
+  // returns three matrices for x, y, z control points
+}
 
 function addSurfaceNormals(points) {
-  for (let i = 0; i < points.length; i++) {
-    if ((i + 1) % 3 == 0) {
-
-    }
+  let final = []
+  for (let i = 0; i < points.length - 4; i += 3) {
+    let pts = [points[i], points[i + 1], points[i + 2],
+               points[i + 3], points[i + 4], points[i + 5]]
+    let norm = surfaceToNormals(points)
+    final.push(...[points[i], points[i + 1], points[i + 2]])
+    final.push(...norm)
+    final.push(...[0, 0])
+    final.push(...[points[i + 3], points[i + 4], points[i + 5]])
+    final.push(...norm)
+    final.push(...[0, 0])
   }
+
+  return final
 }
 
 function crossProduct(vec1, vec2) {
@@ -566,7 +648,21 @@ function crossProduct(vec1, vec2) {
   return prod;
 }
 
-createParametricShape(bezierBicubicSurface
+let control = [[...[0,0,0],  ...[2,-1,0], ...[4,-1,0], ...[6, 0, 0] ],
+[...[-1,1,0], ...[2,1,1],  ...[4,1,1],  ...[7, 1, 0] ],
+[ ...[-1,2,0], ...[2,2,1],  ...[4,2,1],  ...[7, 2, 0] ],
+[ ...[0,3,0], ...[2,4,1],  ...[4,4,1],  ...[6, 3, 0] ]]
+
+console.log('surf')
+console.log(readSurfaceData(teapot_data[1]))
+
+let surface = []
+for (let ti = 0; ti < teapot_data.length; ti++) {
+  surface.push(...createParametricShape(bezierBicubicSurface(...readSurfaceData(teapot_data[ti])),
+                      20, 20))
+}
+// let surf = createParametricShape(bezierBicubicSurface(...readSurfaceData(control)), 5, 5)
+// addSurfaceNormals(surf)
 
 let M = function() {
   let m = {};
@@ -606,13 +702,6 @@ function render(gl, m, triangles, objMat, color) {
 
 let ms = M(); // matrix stack
 
-let bezierFunc = cubicFunction(bezierSpline(0., 0.25, 0.75, 1.));
-let triangles = createParametricShape(variedSphereVertex(bezierFunc, y => y, bezierFunc), 20, 20);
-
-let fz = cubicFunction(bezierSpline(-0.5, 0.1, 0.25, 1))
-let fx = cubicFunction(hermiteSpline(-0.5, 0.75, -0.5, 0.5))
-let fy = cubicFunction(bezierSpline(-0.5, 0.25, 0.28, 0.5))
-
 function animate(gl) {
    let time = (Date.now() - startTime) / 1000;
 
@@ -633,14 +722,18 @@ function animate(gl) {
           0,  0,         0,     1
    ]);
 
-   ms.save();
-   ms.multi(rotateY(Math.PI * Math.sin(time)));
-   ms.multi(rotateX(Math.PI * Math.sin(time)));
-   ms.multi(scale(0.2, 0.2, 0.2));
-   ms.multi(translate(fx(Math.tan(time / 2)), fy(Math.tan(time / 2)), fz(Math.tan(time / 2))));
+   // for (let surface of surfaces) {
+      ms.save();
+      // ms.multi(rotateY(Math.PI * Math.sin(time)));
+      ms.multi(rotateX(Math.PI * Math.sin(time)));
+      ms.multi(scale(0.001, 0.001, 0.001));
+      // ms.multi(translate(-2.8, 0, 0));
+      // ms.multi(translate(fx(Math.tan(time / 2)), fy(Math.tan(time / 2)), fz(Math.tan(time / 2))));
 
-   render(gl, ms, triangles, ms.matrix(), [1., 1., 1.]);
-   ms.restore();
+      // render(gl, ms, triangles, ms.matrix(), [1., 1., 1.]);
+      render(gl, ms, surface, ms.matrix(), [1., 1., 1.]);
+      ms.restore();
+    // }
 }
 
 gl_start(canvas1, vs, fs);
