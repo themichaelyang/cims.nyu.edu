@@ -75,23 +75,20 @@ uniform vec3  uRGB;
 uniform mat4 uMat[3];
 
 void main() {
-
   vec3 normal = normalize(vNor);
   vec3 lDir = normalize(vec3(1.,1.,1.));
-  float a = 0.1 + 0.9 * max(0.,
-           dot(normal, lDir));
-  // vec3 color = uRGB * c;
-  // gl_FragColor = vec4(sqrt(color), 1.0);
+
+  float a = 0.05 + 0.95 * max(0., dot(normal, lDir));
 
   float f = 1.;
   vec3 W = normalize(vec3(vPos.x, vPos.y, -f));
   vec3 E = -W;
 
-  vec3 R = (2. * dot(normal, lDir) * normal) - lDir;
-  float p = 3.;
+  vec3 R = (1. * dot(normal, lDir) * normal) - lDir;
+  float p = 7.;
 
-  float d1 = 0.05; // specular
-  float d2 = .05; // diffuse
+  float d1 = 0.5; // specular
+  float d2 = .25; // diffuse
   // float a = 0.1;
 
   float c1 = pow(max(0., dot(E, R)), p);
@@ -99,11 +96,12 @@ void main() {
 
   float c = d1 * c1 + d2 * c2 + a;
 
-  // c = step(0., normal.z) * .5 * c;
-  // vec3 color = vec3(4. * c, 0.3 * c, 0.3 * c);
+  //c = step(0., normal.z) * .5 * c;
+  c = 0.5 * c;
   vec3 color = uRGB * c;
   gl_FragColor = vec4(sqrt(color), 1.0);
-}</script>
+}
+</script>
 
 <script id='instructions' type='text/html'>
 <div id='description'>
@@ -561,8 +559,21 @@ function bezierBicubicSurface(controlX, controlY, controlZ) {
     // let x = bezierSpline(...multiplyMV(controlX, bezU)).reduce((current, acc, index) => current * vcubic[index] + acc, 0)
     // let y = bezierSpline(...multiplyMV(controlY, bezU)).reduce((current, acc, index) => current * vcubic[index] + acc, 0)
     // let z = bezierSpline(...multiplyMV(controlZ, bezU)).reduce((current, acc, index) => current * vcubic[index] + acc, 0)
-    return [x, y, z, x, y, z, u, v]
+    // let normals = normalize([Math.abs(x), Math.abs(y), Math.abs(z)]);
+    let normals = normalize([x, y, z]);
+    // return [x, y, z, x, y, z, u, v]
+    return [x, y, z, ...normals, u, v]
   }
+}
+
+function normalize(vec) {
+  let length = 0;
+  for (let x of vec) {
+    length += x**2;
+  }
+  length = Math.sqrt(length);
+  let normalVec = vec.slice();
+  return normalVec.map((val) => length == 0 ? 0 : val / length)
 }
 
 // bezier = bezierBicubicSurface()
