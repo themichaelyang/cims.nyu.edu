@@ -35,11 +35,12 @@ body
 
 	display: flex;
 	align-items: center;
-  	justify-content: center;
+  justify-content: center;
 }
 
 #content {
 	width: 50%;
+  max-width: 32em;
 }
 
 ul {
